@@ -41,6 +41,6 @@ func (l *UpdateCatLogic) UpdateCat(in *pb.UpdateCatReq) (*pb.UpdateCatResp, erro
 		return nil, err
 	}
 	// 将未使用的url加入在等待集合之中
-	addUnExistUrlToUsedUrl(&l.svcCtx.Config.Redis, cat.Avatars)
+	removeUsedUrls(&l.svcCtx.Config.Redis, cat.Avatars)
 	return &pb.UpdateCatResp{}, nil
 }
