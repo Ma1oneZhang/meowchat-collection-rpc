@@ -37,6 +37,8 @@ func (l *CreateImageLogic) CreateImage(in *pb.CreateImageReq) (*pb.CreateImageRe
 	id := make([]string, len(data))
 	for i := 0; i < len(data); i++ {
 		id[i] = data[i].ID.Hex()
+		// 将其加入已经使用的图片集合之中
+		addToUsedUrl(&l.svcCtx.Config.Redis, data[i].ImageUrl)
 	}
 	return &pb.CreateImageResp{ImageIds: id}, nil
 }

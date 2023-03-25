@@ -29,6 +29,8 @@ func (l *CreateCatLogic) CreateCat(in *pb.CreateCatReq) (*pb.CreateCatResp, erro
 	if err != nil {
 		return nil, err
 	}
+	// 将其加入已经使用的图片集合之中
+	addUrlsToUsedUrl(&l.svcCtx.Config.Redis, cat.Avatars)
 	err = l.svcCtx.CatModel.Insert(l.ctx, cat)
 	if err != nil {
 		return nil, err
