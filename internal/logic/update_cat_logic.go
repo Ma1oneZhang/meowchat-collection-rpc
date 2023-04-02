@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/xh-polaris/meowchat-collection-rpc/errorx"
 	"github.com/xh-polaris/meowchat-collection-rpc/internal/model"
+	"github.com/xh-polaris/meowchat-collection-rpc/internal/scheduled"
 	"github.com/xh-polaris/meowchat-collection-rpc/pb"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
@@ -40,7 +41,6 @@ func (l *UpdateCatLogic) UpdateCat(in *pb.UpdateCatReq) (*pb.UpdateCatResp, erro
 	if err != nil {
 		return nil, err
 	}
-	// 将未使用的url加入在等待集合之中
-	removeUsedUrls(&l.svcCtx.Config.Redis, cat.Avatars)
+	go scheduled.SendUrlUsedMessageToSts(&l.svcCtx.Config, &cat.Avatars)
 	return &pb.UpdateCatResp{}, nil
 }

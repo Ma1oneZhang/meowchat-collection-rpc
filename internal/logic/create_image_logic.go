@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/xh-polaris/meowchat-collection-rpc/internal/model"
+	"github.com/xh-polaris/meowchat-collection-rpc/internal/scheduled"
 	"github.com/xh-polaris/meowchat-collection-rpc/internal/svc"
 	"github.com/xh-polaris/meowchat-collection-rpc/pb"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,8 +38,11 @@ func (l *CreateImageLogic) CreateImage(in *pb.CreateImageReq) (*pb.CreateImageRe
 	id := make([]string, len(data))
 	for i := 0; i < len(data); i++ {
 		id[i] = data[i].ID.Hex()
-		// 将其加入已经使用的图片集合之中
-		removeUsedUrl(&l.svcCtx.Config.Redis, data[i].ImageUrl)
 	}
+	imgs := make([]string, len(data))
+	for i := 0; i < len(data); i++ {
+		imgs[i] = data[i].ImageUrl
+	}
+	go scheduled.SendUrlUsedMessageToSts(&l.svcCtx.Config, &imgs)
 	return &pb.CreateImageResp{ImageIds: id}, nil
 }
